@@ -1,7 +1,6 @@
 import os
 import ssl
 import json
-from icecream import ic
 from tqdm import tqdm
 from glob import glob
 from pathlib import Path, PurePath
@@ -49,15 +48,20 @@ def irods_makedirs(dir_path: str, session):
         session.collections.create(dir_path)
 
 # remember that inside python, every path to irods location has to be absolute
-def irods_put(pattern: str, target_collection, session, metadata: dict = {}):
+def irods_put(glob_pattern: str, target_collection, session, metadata: dict = {}):
     # gotta check if target collection exists first, by accessing its id
     irods_makedirs(target_collection, session)
 
-    for file in tqdm(glob(pattern)):
-        target_file = target_collection / os.path.basename(file)
-        session.data_objects.put(str(file),str(target_file)) # casting to string since irods uses os.path under the hood
+    for glob_string in tqdm(glob(glob_pattern)):
+        # If the it's a file, put it to the correct place
+        if os.path.isfile(glob_string): 
+            target_file = target_collection / os.path.basename(glob_string)
+            session.data_objects.put(str(glob_string),str(target_file)) # casting to string since irods uses os.path under the hood
 
-    
+        # If it's a directory, calle this function again with adapter target collection
+        elif os.path.isdir(glob_string):
+            recursive_target_collection = target_collection / os.path.basename(glob_string)
+            irods_put(f"{glob_string}/*", recursive_target_collection, session)
    
 def irods_get(collection: str, session, target_dir = "./", start = "./"):
     # First define irods' current working directory if start isn't given, cause ./ doesn't mean anything
@@ -81,5 +85,7 @@ def irods_get(collection: str, session, target_dir = "./", start = "./"):
 if __name__ == "__main__":
     with iRODSSession(irods_env_file=env_file, **ssl_settings) as session:
         home_dir = PurePath(f'/{session.zone}') / 'home' / session.username 
-        irods_get(str(home_dir / "pipeline_test_data/iss/Round1"), session)
+        target_collection = home_dir / "BrainReceptorShowcase" / "Slice1" / "Replicate1" 
+        irods_put("/media/gojira/MERFISH_datasets/BrainReceptorShowcase/Slice1/Replicate1/*", target_collection , session)
+        # irods_get(str(home_dir / "pipeline_test_data/iss/Round1"), session)
 
