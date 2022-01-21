@@ -1,9 +1,9 @@
 import os
 import re
-import tifffile as tf
+from skimage import io
 
 def generateMetaFromName(filename: str):
-    filebase = os.path.splitext(filename)[0]
+    filebase =os.path.basename(os.path.splitext(filename)[0])
     metadata = {"name" : filebase}
     split_list = filebase.split("_")
     for el in split_list: 
@@ -14,13 +14,18 @@ def generateMetaFromName(filename: str):
         except:
             res = True
             metadata[el] = res
+
 def generateMetaFromImage(filename: str):
-    tif = tf.TiffFile(filename)
-    # image = tf.imread(filename)
-    metadata_attrs = [attr for attr in dir(tif) if "meta" in attr]
-    print(metadata_attrs)
-    print(tif.andor_metadata)
+    filebase = os.path.basename(os.path.splitext(filename)[0])
+    metadata = {"name" : filebase}
+    img = io.imread(filename)
+    metadata["X"] = img.shape[1]
+    metadata["Y"] = img.shape[0]
+    metadata["bit_depth"] = img.dtype
+    print(metadata)
+
+        
 
 if __name__ == '__main__':
-    image_path = "/home/david/Documents/presentation_10nov/imgs/1_ME_distal_20X_18WKJuly2021_img10_c0_maxIP.tiff"
+    image_path = "/media/sda1/thesis_data/spatial2/Export_20210412_CartanaISS_AP6_merged_Stitched-MaxIP.tif"
     generateMetaFromImage(image_path)

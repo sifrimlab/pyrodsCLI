@@ -18,8 +18,8 @@ def generateJson(filename,*args, **kwargs):
 
 if __name__ == '__main__':
     filename = sys.argv[1]
-    keys = [sys.argv[i] for i in range(2,len(sys.argv))]
-    generateJson(filename, *keys)
+    args = [sys.argv[i] for i in range(2,len(sys.argv))]
+    generateJson(filename, *args)
 
     
 
