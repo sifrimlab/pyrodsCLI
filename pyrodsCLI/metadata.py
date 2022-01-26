@@ -1,6 +1,11 @@
 """
 Generate metadata for local or irods files
 """
+import os
+import json
+import re
+# from skimage import io
+from irods.meta import iRODSMeta, AVUOperation
 
 def register_arguments(parser):
     parser.add_argument("filename", type=str, default="", help="Path to collection to get")
@@ -42,3 +47,19 @@ def generateMetaFromImage(filename: str):
     metadata["bit_depth"] = img.dtype
     print(metadata)
 
+def add_metadata_from_json(obj, json_file):
+    with open(json_file) as jsonFile:
+        jsonObject = json.load(jsonFile)
+        avus = [item for item in jsonObject.items()]
+        obj.metadata.apply_atomic_operations(*[AVUOperation(operation='add', avu=iRODSMeta("{}".format(str(meta[0]))
+        , "{}".format(str(meta[1])))) for meta in avus])
+
+def metadata_to_json(obj, output_dir = "./"):
+    json_dict = {}
+    json_name = os.path.splitext(obj.name)[0] + ".json"
+
+    for item in obj.metadata.items():
+        json_dict[item.name] = item.value
+
+    with open(os.path.join(output_dir , json_name), "w") as outfile:
+        json.dump(json_dict, outfile)

@@ -2,28 +2,38 @@
 Retrieve data from your iRODS server
 """
 
+from .utils import open_session
+from .metadata import metadata_to_json
+from tqdm import tqdm
+import os
+
+
 def register_arguments(parser):
     parser.add_argument("collection", type=str, help="Path to collection to get")
-    parser.add_argument("target_dir", type=str, help="Path to directory to get to")
+    parser.add_argument("-o", "--target_dir", default="./", type=str, help="Path to directory to get to")
 
 
-def irods_get(collection: str, session, target_dir = "./", start = "./"):
+def irods_get(collection: str, session, target_dir, start = "./"):
     # First define irods' current working directory if start isn't given, cause ./ doesn't mean anything
     if start == "./":
-        start = PurePath(f'/{session.zone}') / 'home' / session.username 
+        start = os.path.join(f'/{session.zone}' , 'home' , session.username)
 
     # Get collection object
-    coll = session.collections.get(collection)
-
+    coll = session.collections.get(os.path.join(start,collection))
     # Walk over the colleciton
     for root, _, files in tqdm(coll.walk(topdown=True)): 
         rel_path = (os.path.relpath(root.path, start=start)) # cut start off of absolute irods path
-        local_path = Path(target_dir, rel_path) # path based on local target dir and irods rel path root
-        local_path.mkdir(parents=True, exist_ok=True) # make the dir if it doesnt exist already
+        local_path = os.path.join(target_dir, rel_path) # path based on local target dir and irods rel path root
+
+        os.makedirs(local_path, exist_ok=True)
 
         for file in files:
-            obj = session.data_objects.get(file.path, Path(local_path, file.name))
+            obj = session.data_objects.get(file.path, os.path.join(local_path, file.name))
             metadata_to_json(obj, output_dir = local_path)
+
+def run(args):
+    session = open_session()
+    irods_get(collection = args.collection, session  = session, target_dir = args.target_dir)
 
 if __name__ == '__main__':
     with iRODSSession(irods_env_file=env_file, **ssl_settings) as session:

@@ -85,7 +85,7 @@ def irods_get(collection: str, session, target_dir = "./", start = "./"):
 if __name__ == "__main__":
     with iRODSSession(irods_env_file=env_file, **ssl_settings) as session:
         home_dir = PurePath(f'/{session.zone}') / 'home' / session.username 
-        target_collection = home_dir / "BrainReceptorShowcase" / "Slice1" / "Replicate1" 
-        irods_put("/media/gojira/MERFISH_datasets/BrainReceptorShowcase/Slice1/Replicate1/*", target_collection , session)
+        target_collection = home_dir / "histology_datasets"    
+        irods_put("/media/gojira/histology_datasets/*", target_collection , session)
         # irods_get(str(home_dir / "pipeline_test_data/iss/Round1"), session)
 
