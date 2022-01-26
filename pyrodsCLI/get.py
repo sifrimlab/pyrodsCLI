@@ -32,7 +32,7 @@ def irods_get(collection: str, session, target_dir, start = "./"):
             metadata_to_json(obj, output_dir = local_path)
 
 def run(args):
-    session = open_session()
+    session, home_dir = open_session()
     irods_get(collection = args.collection, session  = session, target_dir = args.target_dir)
 
 if __name__ == '__main__':

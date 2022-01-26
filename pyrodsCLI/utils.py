@@ -19,6 +19,21 @@ def open_session():
     ssl_settings = {'ssl_context': ssl_context}
 
     with iRODSSession(irods_env_file=env_file, **ssl_settings) as session:
-        return session
+        home_dir = os.path.join(f'/{session.zone}' , 'home' , session.username)
+        return session, home_dir
 
 
+def irods_makedirs(dir_path: str, tmp_session): 
+    """Creates a collection in irods if it doesn't exist already
+
+    Parameters
+    ----------
+    dir_path : str
+        dir_path
+    """
+
+    try:
+        tmp_session.collections.get(dir_path)
+    except:
+        print(dir_path)
+        tmp_session.collections.create(dir_path)
