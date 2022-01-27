@@ -35,5 +35,4 @@ def irods_makedirs(dir_path: str, tmp_session):
     try:
         tmp_session.collections.get(dir_path)
     except:
-        print(dir_path)
         tmp_session.collections.create(dir_path)
