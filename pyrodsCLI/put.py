@@ -4,7 +4,6 @@ Push data to your iRODS server
 import os
 from tqdm import tqdm
 from glob import glob
-from icecream import ic
 from .utils import open_session, irods_makedirs
 
 def register_arguments(parser):
