@@ -1,10 +1,10 @@
 __version__ = '0.1.0'
 
 
-def is_augur_version_compatible(version):
+def is_pyrodsCLI_version_compatible(version):
     """
     Checks if the provided **version** is the same major version
-    as the currently running version of augur.
+    as the currently running version of pyrodsCLI.
     Parameters
     ----------
     version : str

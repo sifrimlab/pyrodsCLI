@@ -35,7 +35,7 @@ setuptools.setup(
     long_description = long_description,
     long_description_content_type = "text/markdown",
     keywords = "database",
-    url = "https://github.com/nextstrain/augur",
+    url = "https://github.com/sifrimlab/pyrodsCLI",
     project_urls = {
         "Bug Reports": "https://github.com/sifrimlab/pyrodsCLI/issues",
         "Source": "https://github.com/sifrimlab/pyrodsCLI",
