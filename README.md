@@ -8,7 +8,7 @@ This repository contains a collection of scripts that utilize the iRODS python c
 
 ## Dependencies
 
-- python 3.6 or above
+- python 3.8 or above
 - python-irodsclient
 
 Optional for intelligent metadata generation:
@@ -23,7 +23,7 @@ pip install pyrodsCLI
 - Use a conda environment:
 
 ```bash
-conda env create -f conda.yml-p ./conda_env/ 
+conda env create -f conda.yml -p ./conda_env/ 
 ```
 
 ## Usage
