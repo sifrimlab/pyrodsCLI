@@ -9,7 +9,6 @@ This repository contains a collection of scripts that utilize the iRODS python c
 ## Dependencies
 
 - python 3.6 or above
-- json
 - python-irodsclient
 
 Optional for intelligent metadata generation:
